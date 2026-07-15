@@ -1,18 +1,36 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ProductsController } from './products.controller';
+import { Controller, Get, Param, ParseIntPipe, Query, Post } from '@nestjs/common';
+import { ProductsService } from './products.service';
 
-describe('ProductsController', () => {
-  let controller: ProductsController;
+@Controller('products')
+export class ProductsController {
+  constructor(private readonly productsService: ProductsService) { }
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [ProductsController],
-    }).compile();
+  @Post('import')
+  importProducts() {
+    return this.productsService.importProducts();
+  }
+  @Get()
+  findAll() {
+    return this.productsService.findAll();
+  }
 
-    controller = module.get<ProductsController>(ProductsController);
-  });
+  @Get('search')
+  searchProducts(@Query('q') query: string) {
+    return this.productsService.search(query);
+  }
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+  @Get('categories')
+  getCategories() {
+    return this.productsService.getCategories();
+  }
+
+  @Get('category/:category')
+  getByCategory(@Param('category') category: string) {
+    return this.productsService.getByCategory(category);
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.findOne(id);
+  }
+}
