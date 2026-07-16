@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import {SearchProvider} from "@/context/SearchContext";
+import {AuthProvider} from "@/context/AuthContext";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,8 +32,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-blue-950 text-white">
-        <Navbar />
-        {children}
+        <AuthProvider>
+          <SearchProvider>
+            <Navbar />
+            {children}
+          </SearchProvider>
+        </AuthProvider>
       </body>
     </html>
   );

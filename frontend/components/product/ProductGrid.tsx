@@ -1,44 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getProducts } from "@/services/product.service";
 import ProductCard from "./ProductCard";
-import { Product } from "@/types/product";
 
-export default function ProductGrid() {
+type Product = {
+    id: number;
+    title: string;
+    description: string;
+    category: string;
+    brand?: string;
+    price: number;
+    discountPercentage?: number;
+    rating?: number;
+    stock: number;
+    thumbnail: string;
+};
 
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
+type Props = {
+    products: Product[];
+};
 
-    useEffect(() => {
+export default function ProductGrid({ products }: Props) {
 
-        async function loadProducts() {
-
-            try {
-                const data = await getProducts();
-                setProducts(data);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-
-        }
-
-        loadProducts();
-
-    }, []);
-
-    if (loading) {
+    if (products.length === 0) {
         return (
-            <div className="text-center text-xl">
-                Loading products...
+            <div className="flex h-60 items-center justify-center">
+                <p className="text-xl text-gray-500">
+                    No products found.
+                </p>
             </div>
         );
     }
 
     return (
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
             {products.map((product) => (
                 <ProductCard

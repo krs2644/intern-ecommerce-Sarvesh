@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/services/auth.service";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginForm() {
     const router = useRouter();
+    const { login: authLogin } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -17,7 +19,7 @@ export default function LoginForm() {
                 email,
                 password,
             });
-            localStorage.setItem("token", result.access_token);
+            authLogin(result.access_token);
 
             router.push("/products");
             console.log(result);
@@ -56,7 +58,7 @@ export default function LoginForm() {
                 />
 
                 <button
-                    onSubmit={handleSubmit}
+                    onClick={handleSubmit}
                     className="w-full rounded-md bg-blue-600 p-3 font-semibold text-white hover:bg-blue-700"
                 >
                     Login
@@ -64,7 +66,7 @@ export default function LoginForm() {
             </div>
 
             <p className="mt-6 text-center">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                     href="/signup"
                     className="font-semibold text-blue-600 hover:underline"
