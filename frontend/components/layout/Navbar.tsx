@@ -11,7 +11,7 @@ export default function Navbar() {
     const [open, setOpen] = useState(false);
     const { isAuthenticated, logout } = useAuth();
     const pathname = usePathname();
-    const showSearch = ["/products", "/cart", "/orders", "/profile"].some((p) => pathname.startsWith(p));
+    const showSearch = pathname.startsWith("/products");
 
     return (
         <>
