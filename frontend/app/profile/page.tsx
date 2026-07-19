@@ -20,22 +20,24 @@ export default function ProfilePage() {
 
     return (
         <AuthGuard>
-            <main className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-blue-950 p-10">
-                <h1 className="mb-10 text-4xl font-bold text-white">My Profile</h1>
+            <main className="min-h-screen bg-slate-50 py-8">
+                <div className="container">
+                    <h1 className="mb-8 section-title">My Profile</h1>
 
-                <div className="mx-auto max-w-2xl">
-                    <div className="glass-card p-8">
-                        {loading ? (
-                            <Spinner />
-                        ) : error ? (
-                            <ErrorMessage message={error} />
-                        ) : profile ? (
-                            <ProfileForm
-                                profile={profile}
-                                onProfileUpdate={setProfile}
-                                onDelete={handleDelete}
-                            />
-                        ) : null}
+                    <div className="mx-auto max-w-2xl">
+                        <div className="card p-8">
+                            {loading ? (
+                                <Spinner />
+                            ) : error ? (
+                                <ErrorMessage message={error} />
+                            ) : profile ? (
+                                <ProfileForm
+                                    profile={profile}
+                                    onProfileUpdate={setProfile}
+                                    onDelete={handleDelete}
+                                />
+                            ) : null}
+                        </div>
                     </div>
                 </div>
             </main>

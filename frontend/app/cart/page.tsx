@@ -8,6 +8,7 @@ import { placeOrder } from "@/services/order.service";
 import AuthGuard from "@/components/auth/AuthGuard";
 import CartItemCard from "@/components/cart/CartItemCard";
 import Spinner from "@/components/ui/Spinner";
+import Link from "next/link";
 
 export default function CartPage() {
     const router = useRouter();
@@ -24,7 +25,6 @@ export default function CartPage() {
         setPlacing(true);
         try {
             await placeOrder();
-            alert("Order placed successfully!");
             router.push("/orders");
         } catch (err) {
             alert(err instanceof Error ? err.message : "Failed to place order");
@@ -35,47 +35,83 @@ export default function CartPage() {
 
     return (
         <AuthGuard>
-            <main className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-blue-950 p-10">
-                <h1 className="mb-10 text-4xl font-bold text-white">Shopping Cart</h1>
+            <main className="min-h-screen bg-slate-50 py-8">
+                <div className="container">
+                    <h1 className="mb-8 section-title">Shopping Cart</h1>
 
-                {loading ? (
-                    <Spinner />
-                ) : !cart ? (
-                    <p className="text-gray-400">Failed to load cart.</p>
-                ) : (
-                    <>
-                        <div className="space-y-6">
-                            {cart.items.length === 0 && (
-                                <h2 className="text-xl text-gray-300">Cart is Empty</h2>
-                            )}
-
-                            {cart.items.map((item) => (
-                                <CartItemCard
-                                    key={item.id}
-                                    item={item}
-                                    onRefresh={refresh}
-                                />
-                            ))}
+                    {loading ? (
+                        <Spinner />
+                    ) : !cart ? (
+                        <div className="card p-10 text-center">
+                            <p className="text-sm text-slate-500">Failed to load cart.</p>
                         </div>
-
-                        <div className="glass-card mt-10 flex items-center justify-between p-8">
-                            <h2 className="text-3xl font-bold text-white">Total</h2>
-                            <h2 className="text-3xl font-bold text-green-400">₹ {total}</h2>
+                    ) : cart.items.length === 0 ? (
+                        <div className="card p-12 text-center">
+                            <svg
+                                className="mx-auto h-16 w-16 text-slate-300"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={1}
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                            </svg>
+                            <h2 className="mt-4 text-lg font-semibold text-slate-900">Your cart is empty</h2>
+                            <p className="mt-2 text-sm text-slate-500">
+                                Looks like you haven&apos;t added anything to your cart yet.
+                            </p>
+                            <Link
+                                href="/products"
+                                className="btn-primary mt-6 inline-flex"
+                            >
+                                Browse Products
+                            </Link>
                         </div>
-
-                        {cart.items.length > 0 && (
-                            <div className="mt-10 text-right">
-                                <button
-                                    onClick={handlePlaceOrder}
-                                    disabled={placing}
-                                    className="rounded-xl bg-blue-700 px-8 py-4 text-xl font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
-                                >
-                                    {placing ? "Placing Order..." : "Place Order"}
-                                </button>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                            <div className="space-y-4 lg:col-span-2">
+                                {cart.items.map((item) => (
+                                    <CartItemCard
+                                        key={item.id}
+                                        item={item}
+                                        onRefresh={refresh}
+                                    />
+                                ))}
                             </div>
-                        )}
-                    </>
-                )}
+
+                            <div className="lg:col-span-1">
+                                <div className="card sticky top-24 p-6">
+                                    <h3 className="text-lg font-semibold text-slate-900">Order Summary</h3>
+                                    <div className="mt-4 space-y-3">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-slate-500">
+                                                Subtotal ({cart.items.length} item{cart.items.length !== 1 ? "s" : ""})
+                                            </span>
+                                            <span className="font-medium text-slate-900">₹{total}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-slate-500">Shipping</span>
+                                            <span className="font-medium text-emerald-600">Free</span>
+                                        </div>
+                                        <div className="border-t border-slate-200 pt-3">
+                                            <div className="flex justify-between">
+                                                <span className="text-base font-semibold text-slate-900">Total</span>
+                                                <span className="text-base font-bold text-slate-900">₹{total}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={handlePlaceOrder}
+                                        disabled={placing}
+                                        className="btn-primary mt-6 w-full"
+                                    >
+                                        {placing ? "Placing Order..." : "Place Order"}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </main>
         </AuthGuard>
     );

@@ -5,14 +5,23 @@ type Props = {
 };
 
 export default function OrderCard({ order }: Props) {
+    const statusStyles: Record<string, string> = {
+        pending: "badge-warning",
+        completed: "badge-success",
+        cancelled: "badge-danger",
+        processing: "badge-info",
+    };
+
+    const statusClass = statusStyles[order.status.toLowerCase()] || "badge-info";
+
     return (
-        <div className="glass-card p-6">
-            <div className="mb-4 flex items-center justify-between">
+        <div className="card p-6">
+            <div className="flex items-start justify-between">
                 <div>
-                    <h2 className="text-xl font-bold text-white">
+                    <h3 className="text-base font-semibold text-slate-900">
                         Order #{order.id}
-                    </h2>
-                    <p className="text-sm text-gray-400">
+                    </h3>
+                    <p className="mt-0.5 text-xs text-slate-500">
                         {new Date(order.createdAt).toLocaleDateString("en-IN", {
                             year: "numeric",
                             month: "long",
@@ -23,36 +32,36 @@ export default function OrderCard({ order }: Props) {
                     </p>
                 </div>
                 <div className="text-right">
-                    <span className="rounded-lg bg-green-500/20 px-3 py-1 text-sm font-semibold text-green-400">
-                        {order.status}
-                    </span>
-                    <p className="mt-2 text-2xl font-bold text-green-400">
-                        ₹ {order.totalPrice}
+                    <span className={statusClass}>{order.status}</span>
+                    <p className="mt-2 text-lg font-bold text-slate-900">
+                        ₹{order.totalPrice}
                     </p>
                 </div>
             </div>
 
-            <div className="space-y-3 border-t border-blue-500/20 pt-4">
-                {order.orderItems.map((item) => (
-                    <div key={item.id} className="flex items-center gap-4">
-                        <img
-                            src={item.product.thumbnail}
-                            alt={item.product.title}
-                            className="h-12 w-12 rounded-lg object-cover"
-                        />
-                        <div className="flex-1">
-                            <p className="font-medium text-white">
-                                {item.product.title}
-                            </p>
-                            <p className="text-sm text-gray-400">
-                                Qty: {item.quantity} × ₹ {item.price}
+            <div className="mt-4 border-t border-slate-100 pt-4">
+                <div className="space-y-3">
+                    {order.orderItems.map((item) => (
+                        <div key={item.id} className="flex items-center gap-3">
+                            <img
+                                src={item.product.thumbnail}
+                                alt={item.product.title}
+                                className="h-10 w-10 rounded-lg object-cover"
+                            />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-slate-900 truncate">
+                                    {item.product.title}
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                    {item.quantity} × ₹{item.price}
+                                </p>
+                            </div>
+                            <p className="text-sm font-medium text-slate-900">
+                                ₹{item.quantity * item.price}
                             </p>
                         </div>
-                        <p className="font-semibold text-white">
-                            ₹ {item.quantity * item.price}
-                        </p>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );

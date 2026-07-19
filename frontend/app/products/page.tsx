@@ -25,7 +25,7 @@ export default function ProductsPage() {
 
     if (loading) {
         return (
-            <main className="min-h-screen bg-white p-10">
+            <main className="min-h-screen bg-slate-50 py-12">
                 <Spinner />
             </main>
         );
@@ -33,16 +33,25 @@ export default function ProductsPage() {
 
     if (error) {
         return (
-            <main className="min-h-screen bg-white p-10">
-                <ErrorMessage message={error} />
+            <main className="min-h-screen bg-slate-50 py-12">
+                <div className="container">
+                    <ErrorMessage message={error} />
+                </div>
             </main>
         );
     }
 
     return (
-        <main className="min-h-screen bg-white p-10">
-            <h1 className="mb-8 text-4xl font-bold text-gray-900">Products</h1>
-            <ProductGrid products={filteredProducts} />
+        <main className="min-h-screen bg-slate-50 py-8">
+            <div className="container">
+                <div className="mb-8">
+                    <h1 className="section-title">All Products</h1>
+                    <p className="mt-2 text-sm text-slate-500">
+                        {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""} found
+                    </p>
+                </div>
+                <ProductGrid products={filteredProducts} />
+            </div>
         </main>
     );
 }

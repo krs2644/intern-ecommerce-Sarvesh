@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Shopify",
+  title: "ShopEase",
   description: "Shop Electronics, Fashion, Furniture and more.",
 };
 
@@ -32,7 +32,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-blue-950 text-white">
+      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
         <AuthProvider>
           <SearchProvider>
             <Navbar />

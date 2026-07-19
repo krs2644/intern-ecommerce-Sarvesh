@@ -53,7 +53,6 @@ export default function ProfileForm({ profile, onProfileUpdate, onDelete }: Prop
         try {
             await deleteProfile();
             onDelete();
-            alert("Account deleted successfully");
         } catch (err) {
             alert(err instanceof Error ? err.message : "Failed to delete account");
         }
@@ -63,38 +62,38 @@ export default function ProfileForm({ profile, onProfileUpdate, onDelete }: Prop
         <>
             {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 
-            <div className="mb-8 flex items-center gap-6">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-700 text-3xl font-bold text-white">
+            <div className="mb-8 flex items-center gap-5">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-xl font-bold text-white">
                     {profile.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-white">{profile.name}</h2>
-                    <p className="text-gray-400">{profile.email}</p>
+                    <h2 className="text-xl font-bold text-slate-900">{profile.name}</h2>
+                    <p className="text-sm text-slate-500">{profile.email}</p>
                 </div>
             </div>
 
             {editing ? (
                 <div className="space-y-4">
                     <div>
-                        <label className="mb-1 block text-sm text-gray-400">Name</label>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">Name</label>
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full rounded-xl border border-blue-500/20 bg-slate-900/70 px-4 py-3 text-white outline-none"
+                            className="input-field"
                         />
                     </div>
                     <div>
-                        <label className="mb-1 block text-sm text-gray-400">Email</label>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full rounded-xl border border-blue-500/20 bg-slate-900/70 px-4 py-3 text-white outline-none"
+                            className="input-field"
                         />
                     </div>
                     <div>
-                        <label className="mb-1 block text-sm text-gray-400">
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
                             New Password (leave blank to keep current)
                         </label>
                         <input
@@ -102,14 +101,14 @@ export default function ProfileForm({ profile, onProfileUpdate, onDelete }: Prop
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••••••"
-                            className="w-full rounded-xl border border-blue-500/20 bg-slate-900/70 px-4 py-3 text-white outline-none placeholder-gray-500"
+                            className="input-field"
                         />
                     </div>
                     <div className="flex gap-3 pt-4">
                         <button
                             onClick={handleUpdate}
                             disabled={saving}
-                            className="rounded-xl bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                            className="btn-primary"
                         >
                             {saving ? "Saving..." : "Save Changes"}
                         </button>
@@ -120,25 +119,25 @@ export default function ProfileForm({ profile, onProfileUpdate, onDelete }: Prop
                                 setEmail(profile.email);
                                 setPassword("");
                             }}
-                            className="rounded-xl bg-gray-700 px-6 py-3 font-semibold text-white hover:bg-gray-600"
+                            className="btn-secondary"
                         >
                             Cancel
                         </button>
                     </div>
                 </div>
             ) : (
-                <div className="space-y-4">
-                    <div className="flex justify-between border-b border-blue-500/20 py-3">
-                        <span className="text-gray-400">Name</span>
-                        <span className="text-white">{profile.name}</span>
+                <div className="space-y-0">
+                    <div className="flex justify-between border-b border-slate-100 py-3">
+                        <span className="text-sm text-slate-500">Name</span>
+                        <span className="text-sm font-medium text-slate-900">{profile.name}</span>
                     </div>
-                    <div className="flex justify-between border-b border-blue-500/20 py-3">
-                        <span className="text-gray-400">Email</span>
-                        <span className="text-white">{profile.email}</span>
+                    <div className="flex justify-between border-b border-slate-100 py-3">
+                        <span className="text-sm text-slate-500">Email</span>
+                        <span className="text-sm font-medium text-slate-900">{profile.email}</span>
                     </div>
-                    <div className="flex justify-between border-b border-blue-500/20 py-3">
-                        <span className="text-gray-400">Member Since</span>
-                        <span className="text-white">
+                    <div className="flex justify-between border-b border-slate-100 py-3">
+                        <span className="text-sm text-slate-500">Member Since</span>
+                        <span className="text-sm font-medium text-slate-900">
                             {new Date(profile.createdAt).toLocaleDateString("en-IN", {
                                 year: "numeric",
                                 month: "long",
@@ -149,13 +148,13 @@ export default function ProfileForm({ profile, onProfileUpdate, onDelete }: Prop
                     <div className="flex gap-3 pt-6">
                         <button
                             onClick={() => setEditing(true)}
-                            className="rounded-xl bg-blue-700 px-6 py-3 font-semibold text-white hover:bg-blue-800"
+                            className="btn-primary"
                         >
                             Edit Profile
                         </button>
                         <button
                             onClick={handleDelete}
-                            className="rounded-xl bg-red-700 px-6 py-3 font-semibold text-white hover:bg-red-800"
+                            className="btn-danger"
                         >
                             Delete Account
                         </button>
