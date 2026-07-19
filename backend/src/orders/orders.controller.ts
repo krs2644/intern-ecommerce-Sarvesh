@@ -2,28 +2,26 @@ import {
   Controller,
   Get,
   Post,
-  UseGuards,
-  Request,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiAuth, CurrentUser } from '../decorators';
 
-@Controller("orders")
-@UseGuards(JwtAuthGuard)
+@Controller('orders')
+@ApiAuth()
 export class OrdersController {
 
   constructor(
     private readonly ordersService: OrdersService,
   ) {}
 
-  @Post("place")
-  placeOrder(@Request() req: any) {
-    return this.ordersService.placeOrder(req.user.id);
+  @Post('place')
+  placeOrder(@CurrentUser() user: any) {
+    return this.ordersService.placeOrder(user.id);
   }
 
   @Get()
-  getOrders(@Request() req: any) {
-    return this.ordersService.getOrders(req.user.id);
+  getOrders(@CurrentUser() user: any) {
+    return this.ordersService.getOrders(user.id);
   }
 
 }

@@ -7,40 +7,35 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
-  Request,
 } from '@nestjs/common';
 import { CartsService } from './carts.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiAuth, CurrentUser } from '../decorators';
+import { AddToCartDto } from './dto';
 
 @Controller('carts')
-@UseGuards(JwtAuthGuard)
+@ApiAuth()
 export class CartsController {
   constructor(private readonly cartsService: CartsService) {}
 
   @Get()
-  getCart(@Request() req: any) {
-    return this.cartsService.getCart(req.user.id);
+  getCart(@CurrentUser() user: any) {
+    return this.cartsService.getCart(user.id);
   }
 
   @Get('total')
-  getTotal(@Request() req: any) {
-    return this.cartsService.getTotal(req.user.id);
+  getTotal(@CurrentUser() user: any) {
+    return this.cartsService.getTotal(user.id);
   }
 
   @Post('add')
   addToCart(
-    @Request() req: any,
-    @Body()
-    body: {
-      productId: number;
-      quantity?: number;
-    },
+    @CurrentUser() user: any,
+    @Body() dto: AddToCartDto,
   ) {
     return this.cartsService.addToCart(
-      req.user.id,
-      body.productId,
-      body.quantity ?? 1,
+      user.id,
+      dto.productId,
+      dto.quantity ?? 1,
     );
   }
 
@@ -69,7 +64,7 @@ export class CartsController {
   }
 
   @Delete()
-  clearCart(@Request() req: any) {
-    return this.cartsService.clearCart(req.user.id);
+  clearCart(@CurrentUser() user: any) {
+    return this.cartsService.clearCart(user.id);
   }
 }

@@ -1,28 +1,28 @@
-import { Controller, Get, Patch, Delete, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiAuth, CurrentUser } from '../decorators';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard)
+@ApiAuth()
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Get('profile')
-    getProfile(@Request() req: any) {
-        return this.usersService.getProfile(req.user.id);
+    getProfile(@CurrentUser() user: any) {
+        return this.usersService.getProfile(user.id);
     }
 
     @Patch('profile')
     updateProfile(
-        @Request() req: any,
+        @CurrentUser() user: any,
         @Body() updateProfileDto: UpdateProfileDto,
     ) {
-        return this.usersService.updateProfile(req.user.id, updateProfileDto);
+        return this.usersService.updateProfile(user.id, updateProfileDto);
     }
 
     @Delete('profile')
-    deleteProfile(@Request() req: any) {
-        return this.usersService.deleteProfile(req.user.id);
+    deleteProfile(@CurrentUser() user: any) {
+        return this.usersService.deleteProfile(user.id);
     }
 }
