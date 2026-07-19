@@ -1,4 +1,5 @@
 import { fetchAPI } from "@/lib/api";
+import { Order } from "@/types";
 
 export interface PlaceOrderResponse {
     message: string;
@@ -18,6 +19,6 @@ export async function placeOrder(): Promise<PlaceOrderResponse> {
     });
 }
 
-export async function getOrders() {
-    return fetchAPI("/orders");
+export async function getOrders(): Promise<Order[]> {
+    return fetchAPI<Order[]>("/orders");
 }
