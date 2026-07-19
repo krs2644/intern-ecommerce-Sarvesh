@@ -1,19 +1,7 @@
 "use client";
 
+import { Product } from "@/types";
 import ProductCard from "./ProductCard";
-
-type Product = {
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    brand?: string;
-    price: number;
-    discountPercentage?: number;
-    rating?: number;
-    stock: number;
-    thumbnail: string;
-};
 
 type Props = {
     products: Product[];

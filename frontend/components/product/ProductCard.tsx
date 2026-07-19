@@ -1,20 +1,8 @@
 "use client";
 
 import { addToCart } from "@/services/cart.service";
+import { Product } from "@/types";
 import Link from "next/link";
-
-type Product = {
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    brand?: string;
-    price: number;
-    discountPercentage?: number;
-    rating?: number;
-    stock: number;
-    thumbnail: string;
-};
 
 type Props = {
     product: Product;
