@@ -1,8 +1,14 @@
 import { Controller, Get, Param, ParseIntPipe, Query, Post } from '@nestjs/common';
 import { ProductsService } from './products.service';
+import { ImportProductsService } from './import-products.service';
+import { SearchQueryDto } from './dto';
+
 @Controller('products')
 export class ProductsController {
-    constructor(private readonly productsService: ProductsService) { }
+    constructor(
+        private readonly productsService: ProductsService,
+        private readonly importProductsService: ImportProductsService,
+    ) {}
 
     @Get()
     findAll() {
@@ -10,8 +16,8 @@ export class ProductsController {
     }
 
     @Get('search')
-    searchProducts(@Query('q') query: string) {
-        return this.productsService.search(query);
+    searchProducts(@Query() query: SearchQueryDto) {
+        return this.productsService.search(query.q);
     }
 
     @Get('categories')
@@ -29,8 +35,8 @@ export class ProductsController {
         return this.productsService.findOne(id);
     }
 
-    @Post("import")
-    importProducts(){
-        return this.productsService.importProducts();
+    @Post('import')
+    importProducts() {
+        return this.importProductsService.importProducts();
     }
 }
