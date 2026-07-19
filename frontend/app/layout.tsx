@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import {SearchProvider} from "@/context/SearchContext";
 import {AuthProvider} from "@/context/AuthContext";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
           <SearchProvider>
             <Navbar />
             {children}
+            <Footer />
           </SearchProvider>
         </AuthProvider>
       </body>

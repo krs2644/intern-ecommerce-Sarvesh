@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useSearch } from "@/context/SearchContext";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "./Sidebar";
+import SearchBar from "@/components/ui/SearchBar";
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
-    const { search, setSearch } = useSearch();
     const { isAuthenticated, logout } = useAuth();
 
     return (
@@ -32,13 +31,7 @@ export default function Navbar() {
                 </div>
 
                 <div className="hidden w-1/3 md:block">
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search products..."
-                        className="w-full rounded-xl border border-blue-500/20 bg-slate-900/70 px-4 py-2 text-white placeholder-gray-400 outline-none"
-                    />
+                    <SearchBar />
                 </div>
 
                 <div className="flex items-center gap-6 text-white">
