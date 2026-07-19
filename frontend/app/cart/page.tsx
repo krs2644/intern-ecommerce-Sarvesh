@@ -13,8 +13,12 @@ import Link from "next/link";
 export default function CartPage() {
     const router = useRouter();
     const { isAuthenticated } = useAuth();
-    const { cart, total, loading, refresh } = useCart();
+    const { cart, loading, refresh } = useCart();
     const [placing, setPlacing] = useState(false);
+    const [removedIds, setRemovedIds] = useState<Set<number>>(new Set());
+
+    const visibleItems = cart?.items.filter((i) => !removedIds.has(i.id)) ?? [];
+    const total = visibleItems.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
 
     async function handlePlaceOrder() {
         if (!isAuthenticated) {
@@ -33,6 +37,10 @@ export default function CartPage() {
         }
     }
 
+    function handleRemove(id: number) {
+        setRemovedIds((prev) => new Set(prev).add(id));
+    }
+
     return (
         <AuthGuard>
             <main className="min-h-screen bg-slate-50 py-8">
@@ -45,7 +53,7 @@ export default function CartPage() {
                         <div className="card p-10 text-center">
                             <p className="text-sm text-slate-500">Failed to load cart.</p>
                         </div>
-                    ) : cart.items.length === 0 ? (
+                    ) : visibleItems.length === 0 ? (
                         <div className="card p-12 text-center">
                             <svg
                                 className="mx-auto h-16 w-16 text-slate-300"
@@ -70,11 +78,11 @@ export default function CartPage() {
                     ) : (
                         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                             <div className="space-y-4 lg:col-span-2">
-                                {cart.items.map((item) => (
+                                {visibleItems.map((item) => (
                                     <CartItemCard
                                         key={item.id}
                                         item={item}
-                                        onRefresh={refresh}
+                                        onRemove={handleRemove}
                                     />
                                 ))}
                             </div>
@@ -85,7 +93,7 @@ export default function CartPage() {
                                     <div className="mt-4 space-y-3">
                                         <div className="flex justify-between text-sm">
                                             <span className="text-slate-500">
-                                                Subtotal ({cart.items.length} item{cart.items.length !== 1 ? "s" : ""})
+                                                Subtotal ({visibleItems.length} item{visibleItems.length !== 1 ? "s" : ""})
                                             </span>
                                             <span className="font-medium text-slate-900">₹{total}</span>
                                         </div>
