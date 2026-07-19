@@ -1,49 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getProduct } from "@/services/product.service";
+import { useProduct } from "@/hooks";
 import { addToCart } from "@/services/cart.service";
 import Link from "next/link";
-
-type Product = {
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    brand?: string;
-    price: number;
-    discountPercentage?: number;
-    rating?: number;
-    stock: number;
-    thumbnail: string;
-    images: string[];
-};
+import Spinner from "@/components/ui/Spinner";
+import ErrorMessage from "@/components/ui/ErrorMessage";
 
 export default function ProductDetailPage() {
     const { id } = useParams();
-    const [product, setProduct] = useState<Product | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        async function loadProduct() {
-            try {
-                const data = await getProduct(Number(id));
-                setProduct(data);
-            } catch (err) {
-                setError("Product not found");
-            } finally {
-                setLoading(false);
-            }
-        }
-        loadProduct();
-    }, [id]);
+    const { product, loading, error } = useProduct(Number(id));
 
     if (loading) {
         return (
-            <main className="flex min-h-screen items-center justify-center bg-white">
-                <h1 className="text-3xl font-bold text-gray-900">Loading...</h1>
+            <main className="min-h-screen bg-white p-10">
+                <Spinner />
             </main>
         );
     }
@@ -51,7 +22,7 @@ export default function ProductDetailPage() {
     if (error || !product) {
         return (
             <main className="flex min-h-screen flex-col items-center justify-center bg-white">
-                <h1 className="text-3xl font-bold text-gray-900">{error || "Product not found"}</h1>
+                <ErrorMessage message={error || "Product not found"} />
                 <Link href="/products" className="mt-4 text-blue-600 hover:underline">
                     Back to Products
                 </Link>
@@ -66,7 +37,6 @@ export default function ProductDetailPage() {
             </Link>
 
             <div className="flex flex-col gap-10 lg:flex-row">
-                {/* Images */}
                 <div className="lg:w-1/2">
                     <img
                         src={product.thumbnail}
@@ -87,7 +57,6 @@ export default function ProductDetailPage() {
                     )}
                 </div>
 
-                {/* Details */}
                 <div className="lg:w-1/2">
                     <p className="text-sm uppercase tracking-wide text-blue-600">
                         {product.brand || "No Brand"}
