@@ -15,7 +15,7 @@ export default function Sidebar({ open, setOpen }: Props) {
         <>
             {open && (
                 <div
-                    className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity lg:hidden"
+                    className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity"
                     onClick={() => setOpen(false)}
                 />
             )}
@@ -23,18 +23,13 @@ export default function Sidebar({ open, setOpen }: Props) {
             <aside
                 className={`fixed left-0 top-0 z-50 flex h-screen w-72 flex-col bg-white shadow-xl transition-transform duration-300 ${
                     open ? "translate-x-0" : "-translate-x-full"
-                } lg:translate-x-0`}
+                }`}
             >
                 <div className="flex items-center justify-between border-b border-slate-200 p-5">
-                    <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-                            S
-                        </div>
-                        <span className="text-lg font-bold text-slate-900">ShopEase</span>
-                    </Link>
+                    <span className="text-lg font-bold text-slate-900">Menu</span>
                     <button
                         onClick={() => setOpen(false)}
-                        className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:hidden"
+                        className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
                     >
                         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -139,7 +134,7 @@ export default function Sidebar({ open, setOpen }: Props) {
 
                 <div className="border-t border-slate-200 p-5">
                     <p className="text-center text-xs text-slate-400">
-                        ShopEase © {new Date().getFullYear()}
+                        © {new Date().getFullYear()}
                     </p>
                 </div>
             </aside>

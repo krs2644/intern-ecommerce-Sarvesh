@@ -35,11 +35,9 @@ export default function RootLayout({
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
         <AuthProvider>
           <SearchProvider>
-            <div className="lg:pl-72">
-              <Navbar />
-              {children}
-              <Footer />
-            </div>
+            <Navbar />
+            {children}
+            <Footer />
           </SearchProvider>
         </AuthProvider>
       </body>
