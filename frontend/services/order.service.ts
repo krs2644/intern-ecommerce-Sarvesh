@@ -1,31 +1,12 @@
-const API_URL = "http://localhost:3001/orders";
+import { fetchAPI } from "@/lib/api";
+import { Order } from "@/types";
 
-function authHeaders(): HeadersInit {
-    const token = localStorage.getItem("token");
-    return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
-export async function placeOrder() {
-    const response = await fetch(`${API_URL}/place`, {
+export async function placeOrder(): Promise<Order> {
+    return fetchAPI<Order>("/orders/place", {
         method: "POST",
-        headers: authHeaders(),
     });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-        throw new Error(result.message || "Failed to place order");
-    }
-
-    return result;
 }
 
-export async function getOrders() {
-    const response = await fetch(API_URL, { headers: authHeaders() });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch orders");
-    }
-
-    return response.json();
+export async function getOrders(): Promise<Order[]> {
+    return fetchAPI<Order[]>("/orders");
 }

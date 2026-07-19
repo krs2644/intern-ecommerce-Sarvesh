@@ -1,91 +1,41 @@
-const API_URL = "http://localhost:3001/carts";
+import { fetchAPI } from "@/lib/api";
+import { Cart } from "@/types";
 
-function authHeaders(): HeadersInit {
-    const token = localStorage.getItem("token");
-    return token ? { Authorization: `Bearer ${token}` } : {};
+export async function getCart(): Promise<Cart> {
+    return fetchAPI<Cart>("/carts");
 }
 
-export async function getCart() {
-    const response = await fetch(API_URL, { headers: authHeaders() });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch cart");
-    }
-
-    return response.json();
+export async function getCartTotal(): Promise<number> {
+    return fetchAPI<number>("/carts/total");
 }
 
-export async function getCartTotal() {
-    const response = await fetch(`${API_URL}/total`, { headers: authHeaders() });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch total");
-    }
-
-    return response.json();
-}
-
-export async function addToCart(productId: number, quantity = 1) {
-    const response = await fetch(`${API_URL}/add`, {
+export async function addToCart(productId: number, quantity = 1): Promise<Cart> {
+    return fetchAPI<Cart>("/carts/add", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            ...authHeaders(),
-        },
-        body: JSON.stringify({
-            productId,
-            quantity,
-        }),
+        body: JSON.stringify({ productId, quantity }),
     });
-
-    if (!response.ok) {
-        throw new Error("Failed to add product");
-    }
-
-    return response.json();
 }
 
-export async function increaseQuantity(cartItemId: number) {
-    const response = await fetch(
-        `${API_URL}/increase/${cartItemId}`,
-        {
-            method: "PATCH",
-            headers: authHeaders(),
-        }
-    );
-
-    return response.json();
+export async function increaseQuantity(cartItemId: number): Promise<Cart> {
+    return fetchAPI<Cart>(`/carts/increase/${cartItemId}`, {
+        method: "PATCH",
+    });
 }
 
-export async function decreaseQuantity(cartItemId: number) {
-    const response = await fetch(
-        `${API_URL}/decrease/${cartItemId}`,
-        {
-            method: "PATCH",
-            headers: authHeaders(),
-        }
-    );
-
-    return response.json();
+export async function decreaseQuantity(cartItemId: number): Promise<Cart> {
+    return fetchAPI<Cart>(`/carts/decrease/${cartItemId}`, {
+        method: "PATCH",
+    });
 }
 
-export async function removeItem(cartItemId: number) {
-    const response = await fetch(
-        `${API_URL}/${cartItemId}`,
-        {
-            method: "DELETE",
-            headers: authHeaders(),
-        }
-    );
-
-    return response.json();
-}
-
-export async function clearCart() {
-    const response = await fetch(API_URL, {
+export async function removeItem(cartItemId: number): Promise<Cart> {
+    return fetchAPI<Cart>(`/carts/${cartItemId}`, {
         method: "DELETE",
-        headers: authHeaders(),
     });
+}
 
-    return response.json();
+export async function clearCart(): Promise<Cart> {
+    return fetchAPI<Cart>("/carts", {
+        method: "DELETE",
+    });
 }
