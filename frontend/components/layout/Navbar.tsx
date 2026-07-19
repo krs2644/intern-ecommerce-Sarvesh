@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "./Sidebar";
 import SearchBar from "@/components/ui/SearchBar";
@@ -9,6 +10,8 @@ import SearchBar from "@/components/ui/SearchBar";
 export default function Navbar() {
     const [open, setOpen] = useState(false);
     const { isAuthenticated, logout } = useAuth();
+    const pathname = usePathname();
+    const showSearch = ["/products", "/cart", "/orders", "/profile"].some((p) => pathname.startsWith(p));
 
     return (
         <>
@@ -35,9 +38,11 @@ export default function Navbar() {
                         </Link>
                     </div>
 
-                    <div className="hidden w-96 md:block">
-                        <SearchBar />
-                    </div>
+                    {showSearch && (
+                        <div className="hidden w-96 md:block">
+                            <SearchBar />
+                        </div>
+                    )}
 
                     <div className="hidden items-center gap-2 lg:flex">
                         {isAuthenticated ? (
