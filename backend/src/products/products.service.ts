@@ -3,14 +3,33 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PaginationDto } from './dto';
+import { PaginatedResponseDto } from './dto/paginated-response.dto';
+import { Product } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  // Get all products
-  async findAll() {
-    return this.prisma.product.findMany();
+  // Get all products with pagination
+  async findAll(pagination: PaginationDto): Promise<PaginatedResponseDto<Product>> {
+    const { page = 1, limit = 10 } = pagination;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.product.findMany({ skip, take: limit }),
+      this.prisma.product.count(),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   // Get one product
@@ -28,44 +47,76 @@ export class ProductsService {
     return product;
   }
 
-  // Search products
-  async search(query: string) {
-    return this.prisma.product.findMany({
-      where: {
-        OR: [
-          {
-            title: {
-              contains: query,
-              mode: 'insensitive',
-            },
+  // Search products with pagination
+  async search(query: string, pagination: PaginationDto): Promise<PaginatedResponseDto<Product>> {
+    const { page = 1, limit = 10 } = pagination;
+    const skip = (page - 1) * limit;
+
+    const where = {
+      OR: [
+        {
+          title: {
+            contains: query,
+            mode: 'insensitive' as const,
           },
-          {
-            category: {
-              contains: query,
-              mode: 'insensitive',
-            },
+        },
+        {
+          category: {
+            contains: query,
+            mode: 'insensitive' as const,
           },
-          {
-            brand: {
-              contains: query,
-              mode: 'insensitive',
-            },
+        },
+        {
+          brand: {
+            contains: query,
+            mode: 'insensitive' as const,
           },
-        ],
+        },
+      ],
+    };
+
+    const [data, total] = await Promise.all([
+      this.prisma.product.findMany({ where, skip, take: limit }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    };
   }
 
-  // Get products by category
-  async getByCategory(category: string) {
-    return this.prisma.product.findMany({
-      where: {
-        category: {
-          equals: category,
-          mode: 'insensitive',
-        },
+  // Get products by category with pagination
+  async getByCategory(category: string, pagination: PaginationDto): Promise<PaginatedResponseDto<Product>> {
+    const { page = 1, limit = 10 } = pagination;
+    const skip = (page - 1) * limit;
+
+    const where = {
+      category: {
+        equals: category,
+        mode: 'insensitive' as const,
       },
-    });
+    };
+
+    const [data, total] = await Promise.all([
+      this.prisma.product.findMany({ where, skip, take: limit }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   // Get all unique categories
