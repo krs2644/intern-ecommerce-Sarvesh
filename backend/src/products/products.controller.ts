@@ -2,8 +2,10 @@ import { Controller, Get, Param, ParseIntPipe, Query, Post } from '@nestjs/commo
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { ImportProductsService } from './import-products.service';
-import { SearchQueryDto } from './dto';
+import { SearchQueryDto, PaginationDto } from './dto';
 import { ProductResponseDto, ImportProductsResponseDto } from './dto/product-response.dto';
+import { PaginatedResponseDto } from './dto/paginated-response.dto';
+import { Product } from '@prisma/client';
 
 @ApiTags('Products')
 @Controller('products')
@@ -14,18 +16,25 @@ export class ProductsController {
     ) {}
 
     @Get()
-    @ApiOperation({ summary: 'Get all products' })
-    @ApiResponse({ status: 200, description: 'List of all products', type: [ProductResponseDto] })
-    findAll() {
-        return this.productsService.findAll();
+    @ApiOperation({ summary: 'Get all products with pagination' })
+    @ApiQuery({ name: 'page', required: false, description: 'Page number', example: 1 })
+    @ApiQuery({ name: 'limit', required: false, description: 'Items per page', example: 10 })
+    @ApiResponse({ status: 200, description: 'Paginated list of products' })
+    findAll(@Query() pagination: PaginationDto): Promise<PaginatedResponseDto<Product>> {
+        return this.productsService.findAll(pagination);
     }
 
     @Get('search')
     @ApiOperation({ summary: 'Search products by title, category, or brand' })
     @ApiQuery({ name: 'q', required: true, description: 'Search query', example: 'phone' })
-    @ApiResponse({ status: 200, description: 'Matching products', type: [ProductResponseDto] })
-    searchProducts(@Query() query: SearchQueryDto) {
-        return this.productsService.search(query.q);
+    @ApiQuery({ name: 'page', required: false, description: 'Page number', example: 1 })
+    @ApiQuery({ name: 'limit', required: false, description: 'Items per page', example: 10 })
+    @ApiResponse({ status: 200, description: 'Paginated matching products' })
+    searchProducts(
+        @Query() query: SearchQueryDto,
+        @Query() pagination: PaginationDto,
+    ): Promise<PaginatedResponseDto<Product>> {
+        return this.productsService.search(query.q, pagination);
     }
 
     @Get('categories')
@@ -38,9 +47,14 @@ export class ProductsController {
     @Get('category/:category')
     @ApiOperation({ summary: 'Get products by category' })
     @ApiParam({ name: 'category', description: 'Category name', example: 'smartphones' })
-    @ApiResponse({ status: 200, description: 'Products in category', type: [ProductResponseDto] })
-    getByCategory(@Param('category') category: string) {
-        return this.productsService.getByCategory(category);
+    @ApiQuery({ name: 'page', required: false, description: 'Page number', example: 1 })
+    @ApiQuery({ name: 'limit', required: false, description: 'Items per page', example: 10 })
+    @ApiResponse({ status: 200, description: 'Paginated products in category' })
+    getByCategory(
+        @Param('category') category: string,
+        @Query() pagination: PaginationDto,
+    ): Promise<PaginatedResponseDto<Product>> {
+        return this.productsService.getByCategory(category, pagination);
     }
 
     @Get(':id')
