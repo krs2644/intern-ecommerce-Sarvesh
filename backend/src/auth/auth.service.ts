@@ -15,7 +15,7 @@ export class AuthService {
                 email: signupDto.email,
             }
         });
-        if (existingUser) {
+        if (existingUser && !existingUser.deletedAt) {
             throw new BadRequestException('This email already exists');
         }
 
@@ -39,9 +39,10 @@ export class AuthService {
     }
 
     async login(loginDto: LoginDto) {
-        const user = await this.prisma.user.findUnique({
+        const user = await this.prisma.user.findFirst({
             where: {
                 email: loginDto.email,
+                deletedAt: null,
             }
         })
 

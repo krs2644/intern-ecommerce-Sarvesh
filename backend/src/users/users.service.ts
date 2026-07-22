@@ -8,8 +8,8 @@ export class UsersService {
     constructor(private prisma: PrismaService) {}
 
     async getProfile(userId: number) {
-        const user = await this.prisma.user.findUnique({
-            where: { id: userId },
+        const user = await this.prisma.user.findFirst({
+            where: { id: userId, deletedAt: null },
             select: {
                 id: true,
                 name: true,
@@ -27,8 +27,8 @@ export class UsersService {
     }
 
     async updateProfile(userId: number, updateProfileDto: UpdateProfileDto) {
-        const user = await this.prisma.user.findUnique({
-            where: { id: userId },
+        const user = await this.prisma.user.findFirst({
+            where: { id: userId, deletedAt: null },
         });
 
         if (!user) {
@@ -68,16 +68,17 @@ export class UsersService {
     }
 
     async deleteProfile(userId: number) {
-        const user = await this.prisma.user.findUnique({
-            where: { id: userId },
+        const user = await this.prisma.user.findFirst({
+            where: { id: userId, deletedAt: null },
         });
 
         if (!user) {
             throw new NotFoundException('User not found');
         }
 
-        await this.prisma.user.delete({
+        await this.prisma.user.update({
             where: { id: userId },
+            data: { deletedAt: new Date() },
         });
 
         return { message: 'Account deleted successfully' };
