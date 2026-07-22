@@ -68,6 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setToken(null);
             router.push("/login");
           }, timeout);
+          setLoading(false);
           return () => clearTimeout(timer);
         }
       } else {
@@ -75,7 +76,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     }
     setLoading(false);
-  }, [router, logout]);
+  }, [router]);
 
   function login(newToken: string) {
     localStorage.setItem("token", newToken);
