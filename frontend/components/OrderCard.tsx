@@ -19,7 +19,7 @@ export default function OrderCard({ order }: Props) {
             <div className="flex items-start justify-between">
                 <div>
                     <h3 className="text-base font-semibold text-slate-900">
-                        Order #{order.id}
+                        Order ID: {order.id}
                     </h3>
                     <p className="mt-0.5 text-xs text-slate-500">
                         {new Date(order.createdAt).toLocaleDateString("en-IN", {

@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useProduct } from "@/hooks";
 import { addToCart } from "@/services/cart.service";
 import Link from "next/link";
-import Spinner from "@/components/ui/Spinner";
-import ErrorMessage from "@/components/ui/ErrorMessage";
+import Spinner from "@/components/Spinner";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function ProductDetailPage() {
     const { id } = useParams();
+    const router = useRouter();
     const { product, loading, error } = useProduct(Number(id));
     const [added, setAdded] = useState(false);
     const [adding, setAdding] = useState(false);
@@ -21,6 +23,7 @@ export default function ProductDetailPage() {
             await addToCart(product!.id);
             setAdded(true);
             setTimeout(() => setAdded(false), 2000);
+            router.push("/cart");
         } catch (err) {
             alert(err instanceof Error ? err.message : "Failed to add to cart");
         } finally {

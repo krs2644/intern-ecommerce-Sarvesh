@@ -13,13 +13,6 @@ export default function Sidebar({ open, setOpen }: Props) {
 
     return (
         <>
-            {open && (
-                <div
-                    className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity"
-                    onClick={() => setOpen(false)}
-                />
-            )}
-
             <aside
                 className={`fixed left-0 top-0 z-50 flex h-screen w-72 flex-col bg-white shadow-xl transition-transform duration-300 ${
                     open ? "translate-x-0" : "-translate-x-full"

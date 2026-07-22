@@ -5,10 +5,10 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "./Sidebar";
-import SearchBar from "@/components/ui/SearchBar";
+import SearchBar from "@/components/SearchBar";
 
 export default function Navbar() {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const { isAuthenticated, logout } = useAuth();
     const pathname = usePathname();
     const showSearch = pathname.startsWith("/products");

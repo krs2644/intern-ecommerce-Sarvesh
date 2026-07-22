@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useSearch } from "@/context/SearchContext";
 import { useProducts } from "@/hooks";
-import ProductGrid from "@/components/product/ProductGrid";
-import Spinner from "@/components/ui/Spinner";
-import ErrorMessage from "@/components/ui/ErrorMessage";
+import ProductGrid from "@/components/ProductGrid";
+import Spinner from "@/components/Spinner";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function ProductsPage() {
     const { products, loading, error } = useProducts();

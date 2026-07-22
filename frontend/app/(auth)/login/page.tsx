@@ -3,25 +3,25 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import SignupForm from "@/components/auth/SignupForm";
+import LoginForm from "@/components/LoginForm";
 
-export default function SignupPage() {
+export default function LoginPage() {
     const router = useRouter();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, loading } = useAuth();
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (!loading && isAuthenticated) {
             router.push("/products");
         }
-    }, [isAuthenticated, router]);
+    }, [isAuthenticated, loading, router]);
 
-    if (isAuthenticated) {
+    if (loading || isAuthenticated) {
         return null;
     }
 
     return (
         <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
-            <SignupForm />
+            <LoginForm />
         </main>
     );
 }

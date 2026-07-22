@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks";
-import AuthGuard from "@/components/auth/AuthGuard";
-import ProfileForm from "@/components/profile/ProfileForm";
-import Spinner from "@/components/ui/Spinner";
-import ErrorMessage from "@/components/ui/ErrorMessage";
+import AuthGuard from "@/components/AuthGuard";
+import ProfileForm from "@/components/ProfileForm";
+import Spinner from "@/components/Spinner";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function ProfilePage() {
     const router = useRouter();

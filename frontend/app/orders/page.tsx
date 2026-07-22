@@ -1,10 +1,10 @@
 "use client";
 
 import { useOrders } from "@/hooks";
-import AuthGuard from "@/components/auth/AuthGuard";
-import OrderCard from "@/components/order/OrderCard";
-import Spinner from "@/components/ui/Spinner";
-import ErrorMessage from "@/components/ui/ErrorMessage";
+import AuthGuard from "@/components/AuthGuard";
+import OrderCard from "@/components/OrderCard";
+import Spinner from "@/components/Spinner";
+import ErrorMessage from "@/components/ErrorMessage";
 import Link from "next/link";
 
 export default function OrdersPage() {
@@ -36,7 +36,7 @@ export default function OrdersPage() {
                                 Your orders will appear here after you place one.
                             </p>
                             <Link
-                                href="/products"
+                                href="/orders"
                                 className="btn-primary mt-6 inline-flex"
                             >
                                 Start Shopping

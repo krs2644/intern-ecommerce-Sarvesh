@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { User } from "@/types";
 import { updateProfile, deleteProfile } from "@/services/user.service";
-import Toast from "@/components/ui/Toast";
+import Toast from "@/components/Toast";
 
 type Props = {
     profile: User;
