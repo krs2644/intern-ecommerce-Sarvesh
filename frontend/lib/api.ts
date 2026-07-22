@@ -18,6 +18,12 @@ export async function fetchAPI<T>(
         },
     });
 
+    if (response.status === 401 && typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        throw new Error("Session expired");
+    }
+
     const result = await response.json();
 
     if (!response.ok) {
