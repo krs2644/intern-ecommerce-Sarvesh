@@ -1,25 +1,32 @@
 import { fetchAPI } from "@/lib/api";
 import { Product } from "@/types";
 
-export async function getProducts(): Promise<Product[]> {
-    const result = await fetchAPI<{ data: Product[] }>("/products");
-    return result.data;
+export interface PaginatedResponse<T> {
+    data: T[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    };
+}
+
+export async function getProducts(page = 1, limit = 10): Promise<PaginatedResponse<Product>> {
+    return fetchAPI<PaginatedResponse<Product>>(`/products?page=${page}&limit=${limit}`);
 }
 
 export async function getProduct(id: number): Promise<Product> {
     return fetchAPI<Product>(`/products/${id}`);
 }
 
-export async function searchProducts(query: string): Promise<Product[]> {
-    const result = await fetchAPI<{ data: Product[] }>(`/products/search?q=${encodeURIComponent(query)}`);
-    return result.data;
+export async function searchProducts(query: string, page = 1, limit = 10): Promise<PaginatedResponse<Product>> {
+    return fetchAPI<PaginatedResponse<Product>>(`/products/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
 }
 
 export async function getCategories(): Promise<string[]> {
     return fetchAPI<string[]>("/products/categories");
 }
 
-export async function getProductsByCategory(category: string): Promise<Product[]> {
-    const result = await fetchAPI<{ data: Product[] }>(`/products/category/${encodeURIComponent(category)}`);
-    return result.data;
+export async function getProductsByCategory(category: string, page = 1, limit = 10): Promise<PaginatedResponse<Product>> {
+    return fetchAPI<PaginatedResponse<Product>>(`/products/category/${encodeURIComponent(category)}?page=${page}&limit=${limit}`);
 }

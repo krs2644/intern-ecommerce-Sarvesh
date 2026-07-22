@@ -4,24 +4,42 @@ import { useEffect, useState } from "react";
 import { getProducts } from "@/services/product.service";
 import { Product } from "@/types";
 
-export function useProducts() {
+export interface PaginationMeta {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+}
+
+export function useProducts(page = 1, limit = 10) {
     const [products, setProducts] = useState<Product[]>([]);
+    const [meta, setMeta] = useState<PaginationMeta>({ total: 0, page: 1, limit: 10, totalPages: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let cancelled = false;
         async function load() {
+            setLoading(true);
             try {
-                const data = await getProducts();
-                setProducts(data);
+                const result = await getProducts(page, limit);
+                if (!cancelled) {
+                    setProducts(result.data);
+                    setMeta(result.meta);
+                }
             } catch (err) {
-                setError(err instanceof Error ? err.message : "Failed to fetch products");
+                if (!cancelled) {
+                    setError(err instanceof Error ? err.message : "Failed to fetch products");
+                }
             } finally {
-                setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
         }
         load();
-    }, []);
+        return () => { cancelled = true; };
+    }, [page, limit]);
 
-    return { products, loading, error };
+    return { products, meta, loading, error };
 }
