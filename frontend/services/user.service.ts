@@ -1,4 +1,4 @@
-import { fetchAPI } from "@/lib/api";
+import { fetchAPI } from "@/services/api";
 import { User } from "@/types";
 
 export async function getProfile(): Promise<User> {

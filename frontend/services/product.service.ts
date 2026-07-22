@@ -1,4 +1,4 @@
-import { fetchAPI } from "@/lib/api";
+import { fetchAPI } from "@/services/api";
 import { Product } from "@/types";
 
 export interface PaginatedResponse<T> {

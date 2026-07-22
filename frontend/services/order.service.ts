@@ -1,4 +1,4 @@
-import { fetchAPI } from "@/lib/api";
+import { fetchAPI } from "@/services/api";
 import { Order } from "@/types";
 
 export interface PlaceOrderResponse {

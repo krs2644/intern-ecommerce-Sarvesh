@@ -1,4 +1,4 @@
-import { fetchAPI } from "@/lib/api";
+import { fetchAPI } from "@/services/api";
 import { Cart } from "@/types";
 
 export async function getCart(): Promise<Cart> {

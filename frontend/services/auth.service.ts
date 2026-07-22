@@ -1,4 +1,4 @@
-import { fetchAPI } from "@/lib/api";
+import { fetchAPI } from "@/services/api";
 import { AuthResponse, SignupResponse, SignupRequest, LoginRequest } from "@/types";
 
 export async function signup(data: SignupRequest): Promise<SignupResponse> {
