@@ -2,7 +2,8 @@ import { fetchAPI } from "@/lib/api";
 import { Product } from "@/types";
 
 export async function getProducts(): Promise<Product[]> {
-    return fetchAPI<Product[]>("/products");
+    const result = await fetchAPI<{ data: Product[] }>("/products");
+    return result.data;
 }
 
 export async function getProduct(id: number): Promise<Product> {
@@ -10,7 +11,8 @@ export async function getProduct(id: number): Promise<Product> {
 }
 
 export async function searchProducts(query: string): Promise<Product[]> {
-    return fetchAPI<Product[]>(`/products/search?q=${encodeURIComponent(query)}`);
+    const result = await fetchAPI<{ data: Product[] }>(`/products/search?q=${encodeURIComponent(query)}`);
+    return result.data;
 }
 
 export async function getCategories(): Promise<string[]> {
@@ -18,5 +20,6 @@ export async function getCategories(): Promise<string[]> {
 }
 
 export async function getProductsByCategory(category: string): Promise<Product[]> {
-    return fetchAPI<Product[]>(`/products/category/${encodeURIComponent(category)}`);
+    const result = await fetchAPI<{ data: Product[] }>(`/products/category/${encodeURIComponent(category)}`);
+    return result.data;
 }
