@@ -5,20 +5,20 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/hooks";
 import { placeOrder } from "@/services/order.service";
-import AuthGuard from "@/components/auth/AuthGuard";
-import CartItemCard from "@/components/cart/CartItemCard";
-import Spinner from "@/components/ui/Spinner";
+import AuthGuard from "@/components/AuthGuard";
+import CartItemCard from "@/components/CartItemCard";
+import Spinner from "@/components/Spinner";
 import Link from "next/link";
 
 export default function CartPage() {
     const router = useRouter();
     const { isAuthenticated } = useAuth();
-    const { cart, loading, refresh } = useCart();
+    const { cart, setCart, loading, refresh } = useCart();
     const [placing, setPlacing] = useState(false);
     const [removedIds, setRemovedIds] = useState<Set<number>>(new Set());
 
     const visibleItems = cart?.items.filter((i) => !removedIds.has(i.id)) ?? [];
-    const total = visibleItems.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
+    const total = Math.round(visibleItems.reduce((sum, i) => sum + i.product.price * i.quantity, 0) * 100) / 100;
 
     async function handlePlaceOrder() {
         if (!isAuthenticated) {
@@ -39,6 +39,16 @@ export default function CartPage() {
 
     function handleRemove(id: number) {
         setRemovedIds((prev) => new Set(prev).add(id));
+    }
+
+    function handleQuantityChange(id: number, newQuantity: number) {
+        if (!cart) return;
+        setCart({
+            ...cart,
+            items: cart.items.map((i) =>
+                i.id === id ? { ...i, quantity: newQuantity } : i
+            ),
+        });
     }
 
     return (
@@ -83,6 +93,7 @@ export default function CartPage() {
                                         key={item.id}
                                         item={item}
                                         onRemove={handleRemove}
+                                        onQuantityChange={handleQuantityChange}
                                     />
                                 ))}
                             </div>

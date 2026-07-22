@@ -29,5 +29,5 @@ export function useCart() {
         refresh();
     }, [refresh]);
 
-    return { cart, total, loading, error, refresh };
+    return { cart, setCart, total, loading, error, refresh };
 }
