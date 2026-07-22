@@ -32,9 +32,9 @@ export class ProductsController {
     @ApiResponse({ status: 200, description: 'Paginated matching products' })
     searchProducts(
         @Query() query: SearchQueryDto,
-        @Query() pagination: PaginationDto,
     ): Promise<PaginatedResponseDto<Product>> {
-        return this.productsService.search(query.q, pagination);
+        const { q, ...pagination } = query;
+        return this.productsService.search(q, pagination);
     }
 
     @Get('categories')
