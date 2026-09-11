@@ -6,8 +6,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
 @Module({
-  imports: [PrismaModule,
+  imports: [
+    PrismaModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -20,4 +25,4 @@ import { JwtStrategy } from './jwt.strategy';
   providers: [AuthService, JwtStrategy],
   exports: [JwtModule],
 })
-export class AuthModule { }
+export class AuthModule {}
