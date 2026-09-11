@@ -8,7 +8,13 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CartsService } from './carts.service';
 import { ApiAuth, CurrentUser } from '../decorators';
 import { AddToCartDto } from './dto';
@@ -23,7 +29,11 @@ export class CartsController {
 
   @Get()
   @ApiOperation({ summary: 'Get current user cart with items' })
-  @ApiResponse({ status: 200, description: 'Cart retrieved', type: CartResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Cart retrieved',
+    type: CartResponseDto,
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getCart(@CurrentUser() user: any) {
     return this.cartsService.getCart(user.id);
@@ -31,7 +41,11 @@ export class CartsController {
 
   @Get('total')
   @ApiOperation({ summary: 'Get cart total price' })
-  @ApiResponse({ status: 200, description: 'Cart total', schema: { example: 1499.99 } })
+  @ApiResponse({
+    status: 200,
+    description: 'Cart total',
+    schema: { example: 1499.99 },
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getTotal(@CurrentUser() user: any) {
     return this.cartsService.getTotal(user.id);
@@ -39,13 +53,14 @@ export class CartsController {
 
   @Post('add')
   @ApiOperation({ summary: 'Add product to cart' })
-  @ApiResponse({ status: 201, description: 'Product added to cart', type: CartItemResponseDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Product added to cart',
+    type: CartItemResponseDto,
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  addToCart(
-    @CurrentUser() user: any,
-    @Body() dto: AddToCartDto,
-  ) {
+  addToCart(@CurrentUser() user: any, @Body() dto: AddToCartDto) {
     return this.cartsService.addToCart(
       user.id,
       dto.productId,
@@ -56,34 +71,54 @@ export class CartsController {
   @Patch('increase/:id')
   @ApiOperation({ summary: 'Increase cart item quantity by 1' })
   @ApiParam({ name: 'id', description: 'Cart item ID', example: 1 })
-  @ApiResponse({ status: 200, description: 'Quantity increased', type: CartItemResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Quantity increased',
+    type: CartItemResponseDto,
+  })
   @ApiResponse({ status: 404, description: 'Cart item not found' })
+  @ApiResponse({ status: 403, description: 'Forbidden - not your cart item' })
   increase(
     @Param('id', ParseIntPipe) cartItemId: number,
+    @CurrentUser() user: any,
   ) {
-    return this.cartsService.increaseQuantity(cartItemId);
+    return this.cartsService.increaseQuantity(cartItemId, user.id);
   }
 
   @Patch('decrease/:id')
-  @ApiOperation({ summary: 'Decrease cart item quantity by 1 (removes if qty <= 1)' })
+  @ApiOperation({
+    summary: 'Decrease cart item quantity by 1 (removes if qty <= 1)',
+  })
   @ApiParam({ name: 'id', description: 'Cart item ID', example: 1 })
-  @ApiResponse({ status: 200, description: 'Quantity decreased', type: CartItemResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Quantity decreased',
+    type: CartItemResponseDto,
+  })
   @ApiResponse({ status: 404, description: 'Cart item not found' })
+  @ApiResponse({ status: 403, description: 'Forbidden - not your cart item' })
   decrease(
     @Param('id', ParseIntPipe) cartItemId: number,
+    @CurrentUser() user: any,
   ) {
-    return this.cartsService.decreaseQuantity(cartItemId);
+    return this.cartsService.decreaseQuantity(cartItemId, user.id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Remove item from cart' })
   @ApiParam({ name: 'id', description: 'Cart item ID', example: 1 })
-  @ApiResponse({ status: 200, description: 'Item removed', type: CartItemResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Item removed',
+    type: CartItemResponseDto,
+  })
   @ApiResponse({ status: 404, description: 'Cart item not found' })
+  @ApiResponse({ status: 403, description: 'Forbidden - not your cart item' })
   remove(
     @Param('id', ParseIntPipe) cartItemId: number,
+    @CurrentUser() user: any,
   ) {
-    return this.cartsService.removeItem(cartItemId);
+    return this.cartsService.removeItem(cartItemId, user.id);
   }
 
   @Delete()

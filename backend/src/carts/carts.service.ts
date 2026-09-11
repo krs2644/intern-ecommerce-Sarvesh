@@ -1,6 +1,8 @@
 import {
   Injectable,
   NotFoundException,
+  ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -52,11 +54,7 @@ export class CartsService {
   /**
    * Add product
    */
-  async addToCart(
-    userId: number,
-    productId: number,
-    quantity = 1,
-  ) {
+  async addToCart(userId: number, productId: number, quantity = 1) {
     const cart = await this.getOrCreateCart(userId);
 
     const product = await this.prisma.product.findUnique({
@@ -66,9 +64,7 @@ export class CartsService {
     });
 
     if (!product) {
-      throw new NotFoundException(
-        'Product not found',
-      );
+      throw new NotFoundException('Product not found');
     }
 
     const existing = await this.prisma.cartItem.findFirst({
@@ -78,13 +74,21 @@ export class CartsService {
       },
     });
 
+    const newQuantity = existing ? existing.quantity + quantity : quantity;
+
+    if (newQuantity > product.stock) {
+      throw new BadRequestException(
+        `Insufficient stock for "${product.title}". Available: ${product.stock}, requested: ${newQuantity}`,
+      );
+    }
+
     if (existing) {
       return this.prisma.cartItem.update({
         where: {
           id: existing.id,
         },
         data: {
-          quantity: existing.quantity + quantity,
+          quantity: newQuantity,
         },
       });
     }
@@ -101,17 +105,27 @@ export class CartsService {
   /**
    * Increase quantity
    */
-  async increaseQuantity(cartItemId: number) {
-    const item =
-      await this.prisma.cartItem.findUnique({
-        where: {
-          id: cartItemId,
-        },
-      });
+  async increaseQuantity(cartItemId: number, userId: number) {
+    const item = await this.prisma.cartItem.findUnique({
+      where: {
+        id: cartItemId,
+      },
+      include: { cart: true, product: true },
+    });
 
     if (!item) {
-      throw new NotFoundException(
-        'Cart item not found',
+      throw new NotFoundException('Cart item not found');
+    }
+
+    if (item.cart.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this cart item');
+    }
+
+    const newQuantity = item.quantity + 1;
+
+    if (newQuantity > item.product.stock) {
+      throw new BadRequestException(
+        `Insufficient stock for "${item.product.title}". Available: ${item.product.stock}`,
       );
     }
 
@@ -120,7 +134,7 @@ export class CartsService {
         id: cartItemId,
       },
       data: {
-        quantity: item.quantity + 1,
+        quantity: newQuantity,
       },
     });
   }
@@ -128,22 +142,24 @@ export class CartsService {
   /**
    * Decrease quantity
    */
-  async decreaseQuantity(cartItemId: number) {
-    const item =
-      await this.prisma.cartItem.findUnique({
-        where: {
-          id: cartItemId,
-        },
-      });
+  async decreaseQuantity(cartItemId: number, userId: number) {
+    const item = await this.prisma.cartItem.findUnique({
+      where: {
+        id: cartItemId,
+      },
+      include: { cart: true },
+    });
 
     if (!item) {
-      throw new NotFoundException(
-        'Cart item not found',
-      );
+      throw new NotFoundException('Cart item not found');
+    }
+
+    if (item.cart.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this cart item');
     }
 
     if (item.quantity <= 1) {
-      return this.removeItem(cartItemId);
+      return this.removeItem(cartItemId, userId);
     }
 
     return this.prisma.cartItem.update({
@@ -159,7 +175,22 @@ export class CartsService {
   /**
    * Remove product
    */
-  async removeItem(cartItemId: number) {
+  async removeItem(cartItemId: number, userId: number) {
+    const item = await this.prisma.cartItem.findUnique({
+      where: {
+        id: cartItemId,
+      },
+      include: { cart: true },
+    });
+
+    if (!item) {
+      throw new NotFoundException('Cart item not found');
+    }
+
+    if (item.cart.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this cart item');
+    }
+
     return this.prisma.cartItem.delete({
       where: {
         id: cartItemId,
