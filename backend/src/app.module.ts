@@ -9,8 +9,15 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UsersModule, ProductsModule, CartsModule, OrdersModule, PrismaModule, AuthModule],
+  imports: [
+    UsersModule,
+    ProductsModule,
+    CartsModule,
+    OrdersModule,
+    PrismaModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
