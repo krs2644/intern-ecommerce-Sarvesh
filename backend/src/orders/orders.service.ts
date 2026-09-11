@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -9,7 +10,6 @@ export class OrdersService {
   constructor(private prisma: PrismaService) {}
 
   async placeOrder(userId: number) {
-
     const cart = await this.prisma.cart.findUnique({
       where: {
         userId,
@@ -24,7 +24,15 @@ export class OrdersService {
     });
 
     if (!cart || cart.items.length === 0) {
-      throw new NotFoundException("Cart is empty");
+      throw new NotFoundException('Cart is empty');
+    }
+
+    for (const item of cart.items) {
+      if (item.product.stock < item.quantity) {
+        throw new BadRequestException(
+          `Insufficient stock for "${item.product.title}". Available: ${item.product.stock}, requested: ${item.quantity}`,
+        );
+      }
     }
 
     let total = 0;
@@ -33,64 +41,63 @@ export class OrdersService {
       total += item.product.price * item.quantity;
     }
 
-    const order = await this.prisma.order.create({
-      data: {
-        userId,
-        totalPrice: total,
-        status: "Placed",
-      },
-    });
-
-    for (const item of cart.items) {
-
-      await this.prisma.orderItem.create({
+    const order = await this.prisma.$transaction(async (tx) => {
+      const order = await tx.order.create({
         data: {
-          orderId: order.id,
-          productId: item.productId,
-          quantity: item.quantity,
-          price: item.product.price,
+          userId,
+          totalPrice: total,
+          status: 'Placed',
         },
       });
 
-    }
+      for (const item of cart.items) {
+        await tx.orderItem.create({
+          data: {
+            orderId: order.id,
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.product.price,
+          },
+        });
 
-    await this.prisma.cartItem.deleteMany({
-      where: {
-        cartId: cart.id,
-      },
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: item.product.stock - item.quantity },
+        });
+      }
+
+      await tx.cartItem.deleteMany({
+        where: {
+          cartId: cart.id,
+        },
+      });
+
+      return order;
     });
 
     return {
-      message: "Order placed successfully",
+      message: 'Order placed successfully',
       order,
     };
   }
 
   async getOrders(userId: number) {
-
     return this.prisma.order.findMany({
-
       where: {
         userId,
       },
 
       include: {
-
         orderItems: {
-
           include: {
             product: true,
           },
-
         },
-
       },
 
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
-
     });
-
   }
 }
