@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaginationDto } from './dto';
 import { PaginatedResponseDto } from './dto/paginated-response.dto';
@@ -12,7 +9,9 @@ export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
   // Get all products with pagination
-  async findAll(pagination: PaginationDto): Promise<PaginatedResponseDto<Product>> {
+  async findAll(
+    pagination: PaginationDto,
+  ): Promise<PaginatedResponseDto<Product>> {
     const { page = 1, limit = 10 } = pagination;
     const skip = (page - 1) * limit;
 
@@ -39,16 +38,17 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new NotFoundException(
-        `Product with id ${id} not found`,
-      );
+      throw new NotFoundException(`Product with id ${id} not found`);
     }
 
     return product;
   }
 
   // Search products with pagination
-  async search(query: string, pagination: PaginationDto): Promise<PaginatedResponseDto<Product>> {
+  async search(
+    query: string,
+    pagination: PaginationDto,
+  ): Promise<PaginatedResponseDto<Product>> {
     const { page = 1, limit = 10 } = pagination;
     const skip = (page - 1) * limit;
 
@@ -92,7 +92,10 @@ export class ProductsService {
   }
 
   // Get products by category with pagination
-  async getByCategory(category: string, pagination: PaginationDto): Promise<PaginatedResponseDto<Product>> {
+  async getByCategory(
+    category: string,
+    pagination: PaginationDto,
+  ): Promise<PaginatedResponseDto<Product>> {
     const { page = 1, limit = 10 } = pagination;
     const skip = (page - 1) * limit;
 
